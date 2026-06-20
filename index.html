@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siddiq Creative — Video Editor & Motion Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030712;
+    --surface: #0d1117;
+    --surface2: #111827;
+    --border: rgba(99,179,237,0.12);
+    --cyan: #63B3ED;
+    --cyan-dim: rgba(99,179,237,0.15);
+    --cyan-glow: rgba(99,179,237,0.4);
+    --violet: #A78BFA;
+    --white: #F0F6FF;
+    --muted: #8B9AB5;
+    --display: 'Syne', sans-serif;
+    --body: 'Space Grotesk', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(3,7,18,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: var(--display); font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--cyan); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-cta { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); border: 1px solid var(--cyan); padding: 8px 20px; border-radius: 2px; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-cta:hover { background: var(--cyan); color: var(--bg); }
+
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .hero-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(99,179,237,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute; width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%);
+    top: 20%; right: 10%; pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--cyan); }
+  .hero-title {
+    font-family: var(--display); font-size: clamp(48px, 7vw, 96px); font-weight: 800;
+    line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 32px; max-width: 900px;
+  }
+  .hero-title .line2 { color: transparent; -webkit-text-stroke: 1px rgba(99,179,237,0.5); }
+  .hero-title .accent { color: var(--cyan); }
+  .hero-desc { font-size: 17px; color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 48px; }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+    background: var(--cyan); color: var(--bg); padding: 14px 32px; border: none; border-radius: 2px;
+    cursor: pointer; text-decoration: none; font-weight: 600; transition: opacity 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; box-shadow: 0 0 24px var(--cyan-glow); }
+  .btn-ghost {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+    background: transparent; color: var(--white); padding: 14px 32px; border: 1px solid var(--border);
+    border-radius: 2px; cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .stats-bar {
+    position: relative; z-index: 1; display: flex;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 48px;
+  }
+  .stat { flex: 1; padding: 32px 40px; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: var(--display); font-size: 42px; font-weight: 800; color: var(--cyan); line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  section { position: relative; z-index: 1; padding: 100px 48px; }
+  .section-eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
+  .section-title { font-family: var(--display); font-size: clamp(32px, 4vw, 52px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 16px; }
+  .section-sub { color: var(--muted); font-size: 16px; max-width: 500px; margin-bottom: 60px; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .about-text p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 20px; }
+  .about-text p strong { color: var(--white); }
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .skill-tag {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+    padding: 12px 16px; font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: 0.04em; display: flex; align-items: center; gap: 8px;
+  }
+  .skill-tag::before { content: '▸'; color: var(--cyan); font-size: 10px; }
+
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .service-card { background: var(--surface); padding: 40px 36px; transition: background 0.2s; position: relative; overflow: hidden; }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet)); opacity: 0; transition: opacity 0.3s;
+  }
+  .service-card:hover::before { opacity: 1; }
+  .service-card:hover { background: var(--surface2); }
+  .service-icon { font-size: 28px; margin-bottom: 20px; display: block; }
+  .service-name { font-family: var(--display); font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .service-desc { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+  /* PORTFOLIO */
+  .portfolio-tabs { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; width: fit-content; margin-bottom: 48px; }
+  .tab-btn {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    background: transparent; color: var(--muted); border: none; padding: 12px 24px;
+    cursor: pointer; border-right: 1px solid var(--border); transition: background 0.2s, color 0.2s;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active, .tab-btn:hover { background: var(--cyan-dim); color: var(--cyan); }
+
+  .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+  .portfolio-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+  }
+  .portfolio-card:hover { border-color: rgba(99,179,237,0.4); transform: translateY(-4px); }
+
+  .portfolio-thumb {
+    width: 100%; aspect-ratio: 16/9; background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+
+  /* Animated gradient placeholder */
+  .thumb-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #0d1117 0%, #111827 50%, #0d1117 100%);
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+  }
+  .thumb-label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .play-btn {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(3,7,18,0.3); transition: background 0.2s; cursor: pointer;
+  }
+  .portfolio-card:hover .play-btn { background: rgba(3,7,18,0.1); }
+  .play-circle {
+    width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center; color: var(--cyan);
+    font-size: 22px; backdrop-filter: blur(8px); background: rgba(99,179,237,0.1);
+    transition: background 0.2s, box-shadow 0.2s; padding-left: 4px;
+  }
+  .portfolio-card:hover .play-circle { background: var(--cyan); color: var(--bg); box-shadow: 0 0 24px var(--cyan-glow); }
+
+  .portfolio-info { padding: 20px 24px; }
+  .portfolio-cat { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+  .portfolio-title { font-family: var(--display); font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .portfolio-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(3,7,18,0.97);
+    z-index: 1000; align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-inner { position: relative; width: 100%; max-width: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .modal-close {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+    background: rgba(3,7,18,0.9); border: 1px solid var(--border); color: var(--white);
+    width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: border-color 0.2s;
+  }
+  .modal-close:hover { border-color: var(--cyan); color: var(--cyan); }
+  .modal-frame-wrap { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
+  .modal-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .modal-meta { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .modal-open-link {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cyan); text-decoration: none; border: 1px solid var(--border);
+    padding: 8px 16px; border-radius: 2px; transition: background 0.2s;
+  }
+  .modal-open-link:hover { background: var(--cyan-dim); }
+
+  /* CONTACT */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .contact-info p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 32px; }
+  .contact-items { display: flex; flex-direction: column; gap: 16px; }
+  .contact-item { display: flex; align-items: center; gap: 14px; font-size: 15px; color: var(--muted); }
+  .contact-item-icon { width: 40px; height: 40px; border-radius: 4px; background: var(--cyan-dim); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-field { display: flex; flex-direction: column; gap: 8px; }
+  .form-field label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .form-field input, .form-field select, .form-field textarea {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+    padding: 12px 16px; color: var(--white); font-family: var(--body); font-size: 15px;
+    outline: none; transition: border-color 0.2s; resize: vertical;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--cyan); }
+  .form-field select option { background: var(--surface2); }
+
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 40px 48px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: var(--display); font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
+  .footer-logo span { color: var(--cyan); }
+  .footer-copy { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .stats-bar { margin: 0 24px; flex-wrap: wrap; }
+    .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    section { padding: 70px 24px; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 24px; }
+    .portfolio-tabs { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Siddiq<span>.</span>Creative</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Hire Me</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow">Video Editor & Motion Designer</div>
+  <h1 class="hero-title">
+    Crafting Visuals<br>
+    <span class="line2">That <span class="accent">Convert</span></span>
+  </h1>
+  <p class="hero-desc">Futuristic UI aesthetics meet strategic storytelling. I create high-impact video content — from motion graphics to SaaS product videos — that captures attention and drives results for modern brands.</p>
+  <div class="hero-actions">
+    <a href="#work" class="btn-primary">View My Work</a>
+    <a href="#contact" class="btn-ghost">Get a Quote</a>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">1+</div><div class="stat-label">Year Experience</div></div>
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Service Areas</div></div>
+  <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Creative Vision</div></div>
+  <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Avg. Turnaround</div></div>
+</div>
+
+<section id="about">
+  <div class="section-eyebrow">About</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <h2 class="section-title">The Editor<br>Behind the Frame</h2>
+      <p>I'm <strong>Siddiq</strong>, a video editor and motion designer specializing in futuristic UI aesthetics and purposeful storytelling — built for brands that refuse to blend in.</p>
+      <p>From <strong>scroll-stopping social reels</strong> to full-scale <strong>SaaS product demos</strong> and <strong>motion graphic campaigns</strong>, every frame I touch is crafted with intention. I work in DaVinci Resolve and treat every project like a visual system, not just a video.</p>
+      <p>Whether you're launching a product, growing a brand, or dominating your content feed — I build the visuals that make it happen.</p>
+    </div>
+    <div>
+      <div class="skills-grid">
+        <div class="skill-tag">DaVinci Resolve</div>
+        <div class="skill-tag">Motion Graphics</div>
+        <div class="skill-tag">Color Grading</div>
+        <div class="skill-tag">UI Animation</div>
+        <div class="skill-tag">Typography</div>
+        <div class="skill-tag">Sound Design</div>
+        <div class="skill-tag">Reels & Shorts</div>
+        <div class="skill-tag">SaaS Videos</div>
+        <div class="skill-tag">Transitions</div>
+        <div class="skill-tag">Visual Effects</div>
+        <div class="skill-tag">Podcast Editing</div>
+        <div class="skill-tag">Brand Ads</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" style="padding-top:0;">
+  <div class="section-eyebrow">Services</div>
+  <h2 class="section-title">What I Deliver</h2>
+  <p class="section-sub">Every format, one consistent standard — cinematic quality that speaks for your brand.</p>
+  <div class="services-grid">
+    <div class="service-card"><span class="service-icon">⚡</span><div class="service-name">Reels & Short-Form</div><p class="service-desc">High-energy, algorithm-friendly edits for Instagram, TikTok, and YouTube Shorts. Designed to stop the scroll and drive engagement.</p></div>
+    <div class="service-card"><span class="service-icon">🎬</span><div class="service-name">Motion Graphics</div><p class="service-desc">Custom UI-style animations, kinetic typography, and futuristic visual systems that elevate your brand's digital presence.</p></div>
+    <div class="service-card"><span class="service-icon">💻</span><div class="service-name">SaaS & Product Videos</div><p class="service-desc">Clean, conversion-focused product demos and explainer videos that communicate your software's value with clarity and style.</p></div>
+    <div class="service-card"><span class="service-icon">🎙️</span><div class="service-name">Podcast Editing</div><p class="service-desc">Professional audio-visual podcast edits with branded lower thirds, dynamic captions, and cinematic scene cuts.</p></div>
+    <div class="service-card"><span class="service-icon">📣</span><div class="service-name">Brand Ads</div><p class="service-desc">Persuasive ad creatives built for paid campaigns — crafted to convert cold audiences into paying customers.</p></div>
+    <div class="service-card"><span class="service-icon">✂️</span><div class="service-name">Long-Form Editing</div><p class="service-desc">Full YouTube videos, documentary-style content, and brand films — edited for retention, pacing, and impact.</p></div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="section-eyebrow">Portfolio</div>
+  <h2 class="section-title">Selected Work</h2>
+  <p class="section-sub">A curated showcase of edits across formats and industries.</p>
+
+  <div class="portfolio-tabs">
+    <button class="tab-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="tab-btn" onclick="filterWork('reel',this)">Reels</button>
+    <button class="tab-btn" onclick="filterWork('motion',this)">Motion</button>
+    <button class="tab-btn" onclick="filterWork('before-after',this)">Before & After</button>
+    <button class="tab-btn" onclick="filterWork('real-estate',this)">Real Estate</button>
+  </div>
+
+  <div class="portfolio-grid" id="portfolio-grid">
+
+    <div class="portfolio-card" data-cat="reel">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1Lx0RiJKzqVIJy83yURcFNQ7Por9xhZrQ/preview','Social Reel 01','Reel','https://drive.google.com/file/d/1Lx0RiJKzqVIJy83yURcFNQ7Por9xhZrQ/view')">
+        <div class="thumb-bg"><span style="font-size:32px">🎬</span><span class="thumb-label">Reel</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Reel</div>
+        <div class="portfolio-title">Social Reel 01</div>
+        <p class="portfolio-desc">Dynamic short-form edit optimized for social engagement and reach.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="reel">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1B3YqXVYGrTKHeyxKwikZMC157Yb9kUP-/preview','Social Reel 02','Reel','https://drive.google.com/file/d/1B3YqXVYGrTKHeyxKwikZMC157Yb9kUP-/view')">
+        <div class="thumb-bg"><span style="font-size:32px">🎬</span><span class="thumb-label">Reel</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Reel</div>
+        <div class="portfolio-title">Social Reel 02</div>
+        <p class="portfolio-desc">Fast-paced editing with rhythm-synced transitions and color grading.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="before-after">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1ATznJ9sBHnR2cpcc3FWXCpd04WMQFKVW/preview','Edit Transformation 01','Before & After','https://drive.google.com/file/d/1ATznJ9sBHnR2cpcc3FWXCpd04WMQFKVW/view')">
+        <div class="thumb-bg"><span style="font-size:32px">✂️</span><span class="thumb-label">Before & After</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Before & After</div>
+        <div class="portfolio-title">Edit Transformation 01</div>
+        <p class="portfolio-desc">Raw footage transformed into a polished, branded visual story.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="before-after">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1ubLYTIYbhD_3IBDXX6tCjcfvrp6h7zPl/preview','Edit Transformation 02','Before & After','https://drive.google.com/file/d/1ubLYTIYbhD_3IBDXX6tCjcfvrp6h7zPl/view')">
+        <div class="thumb-bg"><span style="font-size:32px">✂️</span><span class="thumb-label">Before & After</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Before & After</div>
+        <div class="portfolio-title">Edit Transformation 02</div>
+        <p class="portfolio-desc">Demonstrating the full editing process from source to final cut.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="real-estate">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1PwUq6eOAbxof1PHR83zWAAVAW-8seqPP/preview','Property Showcase 01','Real Estate','https://drive.google.com/file/d/1PwUq6eOAbxof1PHR83zWAAVAW-8seqPP/view')">
+        <div class="thumb-bg"><span style="font-size:32px">🏙️</span><span class="thumb-label">Real Estate</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Real Estate</div>
+        <div class="portfolio-title">Property Showcase 01</div>
+        <p class="portfolio-desc">Cinematic real estate reel with smooth transitions and premium color grading.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="real-estate">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1fZXYkssZ5JrKUISchR7yJ5h9mJPKKVvn/preview','Property Showcase 02','Real Estate','https://drive.google.com/file/d/1fZXYkssZ5JrKUISchR7yJ5w9mJPKKVvn/view')">
+        <div class="thumb-bg"><span style="font-size:32px">🏙️</span><span class="thumb-label">Real Estate</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Real Estate</div>
+        <div class="portfolio-title">Property Showcase 02</div>
+        <p class="portfolio-desc">Luxury property walkthrough with branded overlays and ambient audio.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="motion">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1aV9P-HtGqQHWv9eaO9ILCsMeFXNS7xb6/preview','UI Motion System 01','Motion Graphic','https://drive.google.com/file/d/1aV9P-HtGqQHWv9eaO9ILCsMeFXNS7xb6/view')">
+        <div class="thumb-bg"><span style="font-size:32px">⚡</span><span class="thumb-label">Motion Graphic</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Motion Graphic</div>
+        <div class="portfolio-title">UI Motion System 01</div>
+        <p class="portfolio-desc">Futuristic UI animation with custom motion paths and data visualization elements.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="motion">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1PvvmxRpZL-fALLIhmVNuBy1C4mBNy0zy/preview','UI Motion System 02','Motion Graphic','https://drive.google.com/file/d/1PvvmxRpZL-fALLIhmVNuBy1C4mBNy0zy/view')">
+        <div class="thumb-bg"><span style="font-size:32px">⚡</span><span class="thumb-label">Motion Graphic</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Motion Graphic</div>
+        <div class="portfolio-title">UI Motion System 02</div>
+        <p class="portfolio-desc">Kinetic typography with layered UI elements for a modern brand identity.</p>
+      </div>
+    </div>
+
+    <div class="portfolio-card" data-cat="motion">
+      <div class="portfolio-thumb" onclick="openModal('https://drive.google.com/file/d/1sN6q2Xgf5T63dUCWkD1oPe3jqzTdm9CU/preview','UI Motion System 03','Motion Graphic','https://drive.google.com/file/d/1sN6q2Xgf5T63dUCWkD1oPe3jqzTdm9CU/view')">
+        <div class="thumb-bg"><span style="font-size:32px">⚡</span><span class="thumb-label">Motion Graphic</span></div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Motion Graphic</div>
+        <div class="portfolio-title">UI Motion System 03</div>
+        <p class="portfolio-desc">Product-style motion graphic with holographic overlays and smooth reveal sequences.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-eyebrow">Contact</div>
+  <h2 class="section-title">Let's Work Together</h2>
+  <p class="section-sub">Ready to elevate your brand's visual game? Let's talk.</p>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <p>Whether you're a business owner, SaaS founder, content creator, or agency — if you need video that performs, I'm ready. Fill out the form and I'll get back to you within 24 hours.</p>
+      <div class="contact-items">
+        <div class="contact-item"><div class="contact-item-icon">✉️</div><span>siddiqcreative@gmail.com</span></div>
+        <div class="contact-item"><div class="contact-item-icon">📱</div><span>Available on Instagram & WhatsApp</span></div>
+        <div class="contact-item"><div class="contact-item-icon">⚡</div><span>24–48hr turnaround on most projects</span></div>
+      </div>
+    </div>
+    <div class="contact-form">
+      <div class="form-row">
+        <div class="form-field"><label>Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-field"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      </div>
+      <div class="form-field">
+        <label>Service Needed</label>
+        <select>
+          <option value="">Select a service...</option>
+          <option>Reels & Short-Form</option>
+          <option>Motion Graphics</option>
+          <option>SaaS / Product Video</option>
+          <option>Podcast Editing</option>
+          <option>Brand Ad</option>
+          <option>Long-Form Editing</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Project Details</label><textarea rows="5" placeholder="Tell me about your project, timeline, and budget..."></textarea></div>
+      <button class="btn-primary" style="width:fit-content;">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Siddiq<span>.</span>Creative</div>
+  <div class="footer-copy">© 2025 Siddiq Creative — All rights reserved</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-frame-wrap">
+      <iframe id="modal-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+    </div>
+    <div class="modal-meta">
+      <div>
+        <div class="portfolio-cat" id="modal-cat"></div>
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;" id="modal-title"></div>
+      </div>
+      <a id="modal-link" href="#" target="_blank" class="modal-open-link">Open in Drive ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(src, title, cat, driveLink) {
+    document.getElementById('modal-iframe').src = src;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-cat').textContent = cat;
+    document.getElementById('modal-link').href = driveLink;
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modal-iframe').src = '';
+    document.body.style.overflow = '';
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+  function filterWork(cat, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.portfolio-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
